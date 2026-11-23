@@ -1,0 +1,18 @@
+tenancy_ocid        = "ocid1.tenancy.oc1..reemplazar"
+user_ocid           = "ocid1.user.oc1..reemplazar"
+fingerprint         = "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00"
+private_key_path    = "C:/Users/TU_USUARIO/.oci/oci_api_key.pem"
+region              = "us-ashburn-1"
+compartment_ocid    = "ocid1.compartment.oc1..reemplazar"
+image_ocid          = "ocid1.image.oc1..ubuntu-24-04-de-tu-region"
+ssh_public_key      = "ssh-ed25519 AAAA..."
+instance_shape      = "VM.Standard.A1.Flex"
+ocpus               = 1
+memory_in_gbs       = 6
+boot_volume_size_gb = 50
+
+# Opcional: punto extra de Cloudflare
+# enable_cloudflare    = true
+# cloudflare_api_token = "token-secreto"
+# cloudflare_zone_id   = "id-de-tu-zona"
+# domain_name          = "campuscircular.tudominio.com"

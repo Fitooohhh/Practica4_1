@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: campuscircular
+      POSTGRES_USER: campus
+      POSTGRES_PASSWORD: campus
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campus -d campuscircular"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    environment:
+      PORT: 4000
+      REPOSITORY_MODE: postgres
+      DATABASE_URL: postgresql://campus:campus@db:5432/campuscircular
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:

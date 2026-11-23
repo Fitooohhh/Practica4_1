@@ -1,0 +1,8 @@
+import { expect, test } from '@playwright/test';
+
+test('muestra la marca y el catálogo', async ({ page }) => { await page.goto('/'); await expect(page.getByRole('heading', { name: /CampusCircular/ })).toBeVisible(); await expect(page.getByTestId('item-card')).toHaveCount(3); });
+test('permite buscar un artículo', async ({ page }) => { await page.goto('/'); await page.getByTestId('search-input').fill('bicicleta'); await expect(page.getByTestId('item-card')).toHaveCount(1); });
+test('permite filtrar por categoría', async ({ page }) => { await page.goto('/'); await page.getByTestId('category-filter').selectOption('Hogar'); await expect(page.getByTestId('item-card')).toHaveCount(1); await expect(page.getByText('Maceta autorregable')).toBeVisible(); });
+test('muestra mensaje cuando no hay coincidencias', async ({ page }) => { await page.goto('/'); await page.getByTestId('search-input').fill('objeto inexistente'); await expect(page.getByText(/No encontramos/)).toBeVisible(); });
+test('valida el formulario en el navegador', async ({ page }) => { await page.goto('/'); await page.getByTestId('submit-button').click(); await expect(page.getByTestId('title-input')).toHaveAttribute('required', ''); });
+test('publica un artículo desde la interfaz', async ({ page }) => { await page.goto('/'); await page.getByTestId('title-input').fill('Mochila universitaria'); await page.getByTestId('description-input').fill('Mochila resistente para transportar libros y laptop.'); await page.getByTestId('owner-input').fill('Valeria'); await page.getByTestId('submit-button').click(); await expect(page.getByText('¡Artículo publicado!')).toBeVisible(); await expect(page.getByText('Mochila universitaria')).toBeVisible(); });

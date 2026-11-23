@@ -1,0 +1,12 @@
+node_modules/
+dist-web/
+dist-server/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+terraform/.terraform/
+terraform/*.tfstate*
+terraform/*.tfvars
+ansible/inventory.ini

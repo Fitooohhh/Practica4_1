@@ -137,6 +137,13 @@
                 - "80:4000"
               depends_on:
                 - db
+            cloudflared:
+              image: cloudflare/cloudflared:latest
+              container_name: campuscircular-cloudflared
+              command: tunnel --no-autoupdate --url http://app:4000
+              depends_on:
+                - app
+              restart: unless-stopped
           volumes:
             campuscircular_db:
 
@@ -145,6 +152,27 @@
         cmd: docker compose -f /opt/campuscircular/docker-compose.yml up -d
       register: compose_result
       changed_when: "'Started' in compose_result.stdout or 'Created' in compose_result.stdout or 'Pulled' in compose_result.stdout"
+
+    - name: Esperar y mostrar URL temporal de Cloudflare
+      ansible.builtin.shell: |
+        for attempt in $(seq 1 30); do
+          url=$(docker logs --tail 100 campuscircular-cloudflared 2>&1 | grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' | head -n 1 || true)
+          if [ -n "$url" ]; then
+            echo "$url"
+            exit 0
+          fi
+          sleep 2
+        done
+        exit 1
+      args:
+        executable: /bin/bash
+      register: cloudflare_quick_tunnel
+      changed_when: false
+      failed_when: false
+
+    - name: Publicar URL temporal de Cloudflare en el log
+      ansible.builtin.debug:
+        msg: "Cloudflare Quick Tunnel: {{ cloudflare_quick_tunnel.stdout | default('URL no disponible; revisar docker logs campuscircular-cloudflared') }}"
 
   handlers:
     - name: Reiniciar VNC

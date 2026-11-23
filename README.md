@@ -127,6 +127,20 @@ ssh -i ~/.ssh/campuscircular ubuntu@IP_PUBLICA
 
 ## Cloudflare — punto extra
 
+### Opción disponible sin dominio: Quick Tunnel
+
+Si no tienes un dominio, el playbook de Ansible levanta un contenedor `cloudflared` y ejecuta un Quick Tunnel hacia la aplicación. GitHub Actions muestra en el log una URL temporal con formato `https://algo.trycloudflare.com`. La URL permanece disponible mientras el contenedor esté activo y puede cambiar si el contenedor se recrea.
+
+Esta opción sirve para demostrar el uso de Cloudflare y crear una URL pública temporal. Cloudflare documenta que los Quick Tunnels no requieren cuenta ni dominio y están pensados para pruebas o demostraciones, no para producción permanente.
+
+Para revisar la URL directamente en la VM:
+
+```bash
+sudo docker logs --tail 100 campuscircular-cloudflared
+```
+
+### Opción permanente con dominio
+
 Si tienes un dominio administrado en Cloudflare, define en Terraform:
 
 ```hcl

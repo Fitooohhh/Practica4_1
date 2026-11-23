@@ -27,7 +27,7 @@ Hay 14 pruebas unitarias, 8 de integración y 6 E2E. Las pruebas E2E usan el rep
 
 `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `OCI_TENANCY_OCID`, `OCI_USER_OCID`, `OCI_FINGERPRINT`, `OCI_PRIVATE_KEY`, `OCI_COMPARTMENT_OCID`, `OCI_UBUNTU_2404_IMAGE_OCID`, `OCI_SSH_PUBLIC_KEY`, `OCI_REGION`, `SSH_PRIVATE_KEY`, `VNC_PASSWORD` y opcionalmente `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ZONE_ID` si se implementa el dominio extra.
 
-La VM se crea en Oracle Cloud con el proveedor OCI de Terraform. Antes de ejecutar `terraform apply` se necesita crear en OCI el usuario/API key y obtener el OCID regional de la imagen Ubuntu 24.04; esos datos se guardan como secretos y no se escriben en el repositorio.
+La VM se crea en Oracle Cloud con el proveedor OCI de Terraform usando `VM.Standard.E4.Flex`, 1 OCPU y 2 GB de RAM. Es una forma pagada, no Always Free. Terraform consulta el catálogo de la región y selecciona la imagen compatible más reciente de Ubuntu 24.04; los datos de autenticación se guardan como secretos y no se escriben en el repositorio.
 
 ## Ejecución local
 

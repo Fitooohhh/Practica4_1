@@ -33,6 +33,12 @@ variable "availability_domain" {
   default = ""
 }
 
+variable "fault_domain" {
+  type        = string
+  default     = ""
+  description = "Fault domain de OCI. Vacío permite que Oracle lo seleccione automáticamente."
+}
+
 variable "ssh_public_key" {
   type        = string
   sensitive   = true
@@ -66,7 +72,7 @@ variable "private_subnet_cidr" {
 
 variable "instance_shape" {
   type    = string
-  default = "VM.Standard.A1.Flex"
+  default = "VM.Standard.E5.Flex"
 }
 
 variable "ocpus" {

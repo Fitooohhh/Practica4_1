@@ -100,7 +100,7 @@ No se crea ninguna VM hasta ejecutar `terraform apply`. La preparación inicial 
    terraform output -raw public_ip
    ```
 
-Terraform crea la VCN `10.0.0.0/16`, subred pública, subred privada, gateway, reglas para 22/80/443/5901 y la VM Ubuntu 24.04. La forma recomendada es dejar la VCN y las subredes en Terraform para que la evidencia de la práctica sea reproducible.
+Terraform crea la VCN `10.0.0.0/16`, subred pública, subred privada, gateway, reglas para 22/80/443/5901 y la VM Ubuntu 24.04 `VM.Standard.E4.Flex` pagada con 1 OCPU y 2 GB. La forma recomendada es dejar la VCN y las subredes en Terraform para que la evidencia de la práctica sea reproducible.
 
 ## Configurar la VM con Ansible
 

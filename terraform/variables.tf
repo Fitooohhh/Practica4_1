@@ -33,11 +33,6 @@ variable "availability_domain" {
   default = ""
 }
 
-variable "image_ocid" {
-  type        = string
-  description = "OCID regional de la imagen Canonical Ubuntu 24.04"
-}
-
 variable "ssh_public_key" {
   type        = string
   sensitive   = true

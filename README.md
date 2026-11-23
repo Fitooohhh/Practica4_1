@@ -51,7 +51,7 @@ npm run build
 
 Secretos mínimos de GitHub:
 
-`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `OCI_TENANCY_OCID`, `OCI_USER_OCID`, `OCI_FINGERPRINT`, `OCI_PRIVATE_KEY`, `OCI_COMPARTMENT_OCID`, `OCI_UBUNTU_2404_IMAGE_OCID`, `OCI_SSH_PUBLIC_KEY`, `OCI_REGION`, `SSH_PRIVATE_KEY` y `VNC_PASSWORD`.
+`DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `OCI_TENANCY_OCID`, `OCI_USER_OCID`, `OCI_FINGERPRINT`, `OCI_PRIVATE_KEY`, `OCI_COMPARTMENT_OCID`, `OCI_SSH_PUBLIC_KEY`, `OCI_REGION`, `SSH_PRIVATE_KEY` y `VNC_PASSWORD`.
 
 ## Crear el repositorio desde cero
 
@@ -85,9 +85,8 @@ No se crea ninguna VM hasta ejecutar `terraform apply`. La preparación inicial 
    ssh-keygen -t ed25519 -C campuscircular -f "$env:USERPROFILE\.ssh\campuscircular"
    ```
 
-4. En la región elegida, localizar la imagen **Canonical Ubuntu 24.04** y copiar su `image OCID`.
-5. Copiar `terraform/terraform.tfvars.example` a `terraform/terraform.tfvars` y completar los valores. No subir ese archivo a GitHub.
-6. Ejecutar desde `terraform/`:
+4. Copiar `terraform/terraform.tfvars.example` a `terraform/terraform.tfvars` y completar los valores. No subir ese archivo a GitHub. Terraform selecciona automáticamente la imagen compatible más reciente de Ubuntu 24.04.
+5. Ejecutar desde `terraform/`:
 
    ```powershell
    terraform init
@@ -95,7 +94,7 @@ No se crea ninguna VM hasta ejecutar `terraform apply`. La preparación inicial 
    terraform apply
    ```
 
-7. Obtener la IP pública:
+6. Obtener la IP pública:
 
    ```powershell
    terraform output -raw public_ip

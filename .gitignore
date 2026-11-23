@@ -9,4 +9,5 @@ test-results/
 terraform/.terraform/
 terraform/*.tfstate*
 terraform/*.tfvars
+terraform/*.plan
 ansible/inventory.ini

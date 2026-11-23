@@ -2,6 +2,16 @@ data "oci_identity_availability_domains" "ads" {
   compartment_id = var.tenancy_ocid
 }
 
+data "oci_core_images" "ubuntu" {
+  compartment_id           = var.compartment_ocid
+  operating_system         = "Canonical Ubuntu"
+  operating_system_version = "24.04"
+  shape                    = var.instance_shape
+  state                    = "AVAILABLE"
+  sort_by                  = "TIMECREATED"
+  sort_order               = "DESC"
+}
+
 locals {
   availability_domain = var.availability_domain != "" ? var.availability_domain : data.oci_identity_availability_domains.ads.availability_domains[0].name
 }
@@ -111,7 +121,7 @@ resource "oci_core_instance" "app" {
   }
 
   source_details {
-    source_id               = var.image_ocid
+    source_id               = data.oci_core_images.ubuntu.images[0].id
     source_type             = "image"
     boot_volume_size_in_gbs = var.boot_volume_size_gb
   }

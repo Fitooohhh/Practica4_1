@@ -18,6 +18,10 @@ output "availability_domain" {
   value = local.availability_domain
 }
 
+output "available_fault_domains" {
+  value = data.oci_identity_fault_domains.fds.fault_domains[*].name
+}
+
 output "cloudflare_record" {
   value = var.enable_cloudflare ? cloudflare_dns_record.app[0].name : "Cloudflare desactivado"
 }

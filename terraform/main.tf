@@ -2,6 +2,11 @@ data "oci_identity_availability_domains" "ads" {
   compartment_id = var.tenancy_ocid
 }
 
+data "oci_identity_fault_domains" "fds" {
+  availability_domain = local.availability_domain
+  compartment_id      = var.tenancy_ocid
+}
+
 data "oci_core_images" "ubuntu" {
   compartment_id           = var.compartment_ocid
   operating_system         = "Canonical Ubuntu"
@@ -111,6 +116,7 @@ resource "oci_core_subnet" "private" {
 
 resource "oci_core_instance" "app" {
   availability_domain = local.availability_domain
+  fault_domain        = var.fault_domain != "" ? var.fault_domain : null
   compartment_id      = var.compartment_ocid
   display_name        = "${var.project_name}-vm"
   shape               = var.instance_shape

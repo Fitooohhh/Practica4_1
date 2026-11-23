@@ -53,6 +53,10 @@ Secretos mínimos de GitHub:
 
 `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `OCI_TENANCY_OCID`, `OCI_USER_OCID`, `OCI_FINGERPRINT`, `OCI_PRIVATE_KEY`, `OCI_COMPARTMENT_OCID`, `OCI_SSH_PUBLIC_KEY`, `OCI_REGION`, `SSH_PRIVATE_KEY` y `VNC_PASSWORD`.
 
+Variables de repositorio para que Terraform importe la infraestructura existente y no cree una segunda VM:
+
+`OCI_VCN_ID`, `OCI_IGW_ID`, `OCI_ROUTE_TABLE_ID`, `OCI_SECURITY_LIST_ID`, `OCI_PRIVATE_SUBNET_ID`, `OCI_PUBLIC_SUBNET_ID` y `OCI_INSTANCE_ID`.
+
 ## Crear el repositorio desde cero
 
 Después de crear un repositorio vacío en GitHub:

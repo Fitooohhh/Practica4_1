@@ -60,6 +60,13 @@ jobs:
       TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
       TF_VAR_ssh_public_key: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
       TF_VAR_region: ${{ secrets.OCI_REGION }}
+      OCI_VCN_ID: ${{ vars.OCI_VCN_ID }}
+      OCI_IGW_ID: ${{ vars.OCI_IGW_ID }}
+      OCI_ROUTE_TABLE_ID: ${{ vars.OCI_ROUTE_TABLE_ID }}
+      OCI_SECURITY_LIST_ID: ${{ vars.OCI_SECURITY_LIST_ID }}
+      OCI_PRIVATE_SUBNET_ID: ${{ vars.OCI_PRIVATE_SUBNET_ID }}
+      OCI_PUBLIC_SUBNET_ID: ${{ vars.OCI_PUBLIC_SUBNET_ID }}
+      OCI_INSTANCE_ID: ${{ vars.OCI_INSTANCE_ID }}
       DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/campuscircular:latest
       VNC_PASSWORD: ${{ secrets.VNC_PASSWORD }}
     steps:
@@ -69,9 +76,37 @@ jobs:
         run: |
           printf '%s' '${{ secrets.OCI_PRIVATE_KEY }}' > /tmp/oci_api_key.pem
           chmod 600 /tmp/oci_api_key.pem
-      - name: Crear VM y red con Terraform
+      - name: Inicializar Terraform
         working-directory: terraform
-        run: terraform init && terraform apply -auto-approve
+        run: terraform init
+      - name: Importar estado de OCI existente
+        working-directory: terraform
+        run: |
+          set -euo pipefail
+          required=(OCI_VCN_ID OCI_IGW_ID OCI_ROUTE_TABLE_ID OCI_SECURITY_LIST_ID OCI_PRIVATE_SUBNET_ID OCI_PUBLIC_SUBNET_ID OCI_INSTANCE_ID)
+          for name in "${required[@]}"; do
+            if [ -z "${!name:-}" ]; then
+              echo "Falta la variable de repositorio $name. No se aplicara Terraform para evitar duplicar recursos."
+              exit 1
+            fi
+          done
+          import_if_missing() {
+            address="$1"
+            resource_id="$2"
+            if ! terraform state list | grep -Fxq "$address"; then
+              terraform import -input=false "$address" "$resource_id"
+            fi
+          }
+          import_if_missing oci_core_vcn.main "$OCI_VCN_ID"
+          import_if_missing oci_core_internet_gateway.main "$OCI_IGW_ID"
+          import_if_missing oci_core_route_table.public "$OCI_ROUTE_TABLE_ID"
+          import_if_missing oci_core_security_list.app "$OCI_SECURITY_LIST_ID"
+          import_if_missing oci_core_subnet.private "$OCI_PRIVATE_SUBNET_ID"
+          import_if_missing oci_core_subnet.public "$OCI_PUBLIC_SUBNET_ID"
+          import_if_missing oci_core_instance.app "$OCI_INSTANCE_ID"
+      - name: Aplicar Terraform sin duplicar infraestructura
+        working-directory: terraform
+        run: terraform apply -auto-approve
       - name: Obtener IP publica
         id: ip
         working-directory: terraform
@@ -83,5 +118,9 @@ jobs:
           printf '[app]\ncampuscircular ansible_host=%s ansible_user=ubuntu ansible_ssh_private_key_file=/tmp/campuscircular.pem\n' '${{ steps.ip.outputs.public_ip }}' > ansible/inventory.ini
           printf '%s' '${{ secrets.SSH_PRIVATE_KEY }}' > /tmp/campuscircular.pem
           chmod 600 /tmp/campuscircular.pem
+          for attempt in {1..30}; do
+            if ssh -i /tmp/campuscircular.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=5 ubuntu@'${{ steps.ip.outputs.public_ip }}' 'echo ssh-ready' >/dev/null 2>&1; then break; fi
+            sleep 10
+          done
       - name: Configurar VM con Ansible
         run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
